@@ -64,6 +64,9 @@ class Feedback
         @phrases.suggestions.no_need_for_symbols_digits_uppercase
       ]
 
+  from_result: (result) ->
+    @get_feedback result.score, result.sequence
+
   get_feedback: (score, sequence) ->
     # starting feedback
     return @default_feedback if sequence.length == 0
