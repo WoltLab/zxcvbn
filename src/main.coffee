@@ -24,4 +24,6 @@ zxcvbn = (password, user_inputs = []) ->
   result.feedback = feedbacker.get_feedback result.score, result.sequence
   result
 
+zxcvbn.Feedback = Feedback
+
 module.exports = zxcvbn
