@@ -47,13 +47,14 @@ phrases =
     name: 'Common names and surnames are easy to guess'
 
 
-feedback =
-  default_feedback:
-    warning: ''
-    suggestions: [
-      phrases.suggestions.use_words_avoid_common_phrases
-      phrases.suggestions.no_need_for_symbols_digits_uppercase
-    ]
+class Feedback
+  constructor: (@phrases = phrases) ->
+    @default_feedback =
+      warning: ''
+      suggestions: [
+        @phrases.suggestions.use_words_avoid_common_phrases
+        @phrases.suggestions.no_need_for_symbols_digits_uppercase
+      ]
 
   get_feedback: (score, sequence) ->
     # starting feedback
@@ -69,7 +70,7 @@ feedback =
     for match in sequence[1..]
       longest_match = match if match.token.length > longest_match.token.length
     feedback = @get_match_feedback(longest_match, sequence.length == 1)
-    extra_feedback = phrases.suggestions.add_word_uncommon_better
+    extra_feedback = @phrases.suggestions.add_word_uncommon_better
     if feedback?
       feedback.suggestions.unshift extra_feedback
       feedback.warning = '' unless feedback.warning?
@@ -87,81 +88,81 @@ feedback =
       when 'spatial'
         layout = match.graph.toUpperCase()
         warning = if match.turns == 1
-          phrases.warnings.straight_row
+          @phrases.warnings.straight_row
         else
-          phrases.warnings.short_keyboard_pattern
+          @phrases.warnings.short_keyboard_pattern
         warning: warning
         suggestions: [
-          phrases.suggestions.use_longer_keyboard_pattern
+          @phrases.suggestions.use_longer_keyboard_pattern
         ]
 
       when 'repeat'
         warning = if match.base_token.length == 1
-          phrases.warnings.repeat_single_char
+          @phrases.warnings.repeat_single_char
         else
-          phrases.warnings.repeat
+          @phrases.warnings.repeat
         warning: warning
         suggestions: [
-          phrases.suggestions.avoid_repeat
+          @phrases.suggestions.avoid_repeat
         ]
 
       when 'sequence'
-        warning: phrases.warnings.sequence
+        warning: @phrases.warnings.sequence
         suggestions: [
-          phrases.suggestions.avoid_sequence
+          @phrases.suggestions.avoid_sequence
         ]
 
       when 'regex'
         if match.regex_name == 'recent_year'
-          warning: phrases.warnings.recent_year
+          warning: @phrases.warnings.recent_year
           suggestions: [
-            phrases.suggestions.avoid_recent_year
-            phrases.suggestions.avoid_associated_year
+            @phrases.suggestions.avoid_recent_year
+            @phrases.suggestions.avoid_associated_year
           ]
 
       when 'date'
-        warning: phrases.warnings.date
+        warning: @phrases.warnings.date
         suggestions: [
-          phrases.suggestions.avoid_date
+          @phrases.suggestions.avoid_date
         ]
 
   get_dictionary_match_feedback: (match, is_sole_match) ->
     warning = if match.dictionary_name == 'passwords'
       if is_sole_match and not match.l33t and not match.reversed
         if match.rank <= 10
-          phrases.warnings.top_10
+          @phrases.warnings.top_10
         else if match.rank <= 100
-          phrases.warnings.top_100
+          @phrases.warnings.top_100
         else
-          phrases.warnings.common
+          @phrases.warnings.common
       else if match.guesses_log10 <= 4
-        phrases.warnings.common_alike
+        @phrases.warnings.common_alike
     else if match.dictionary_name == 'english_wikipedia'
       if is_sole_match
-        phrases.warnings.sole_word
+        @phrases.warnings.sole_word
     else if match.dictionary_name in ['surnames', 'male_names', 'female_names']
       if is_sole_match
-        phrases.warnings.sole_name
+        @phrases.warnings.sole_name
       else
-        phrases.warnings.name
+        @phrases.warnings.name
     else
       ''
 
     suggestions = []
     word = match.token
     if word.match(scoring.START_UPPER)
-      suggestions.push phrases.suggestions.start_upper
+      suggestions.push @phrases.suggestions.start_upper
     else if word.match(scoring.ALL_UPPER) and word.toLowerCase() != word
-      suggestions.push phrases.suggestions.all_upper
+      suggestions.push @phrases.suggestions.all_upper
 
     if match.reversed and match.token.length >= 4
-      suggestions.push phrases.suggestions.reversed
+      suggestions.push @phrases.suggestions.reversed
     if match.l33t
-      suggestions.push phrases.suggestions.l33t
+      suggestions.push @phrases.suggestions.l33t
 
     result =
       warning: warning
       suggestions: suggestions
     result
 
-module.exports = feedback
+module.exports = Feedback

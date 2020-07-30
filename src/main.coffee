@@ -1,9 +1,11 @@
 matching = require './matching'
 scoring = require './scoring'
 time_estimates = require './time_estimates'
-feedback = require './feedback'
+Feedback = require './feedback'
 
 time = -> (new Date()).getTime()
+
+feedbacker = new Feedback
 
 zxcvbn = (password, user_inputs = []) ->
   start = time()
@@ -19,7 +21,7 @@ zxcvbn = (password, user_inputs = []) ->
   attack_times = time_estimates.estimate_attack_times result.guesses
   for prop, val of attack_times
     result[prop] = val
-  result.feedback = feedback.get_feedback result.score, result.sequence
+  result.feedback = feedbacker.get_feedback result.score, result.sequence
   result
 
 module.exports = zxcvbn
