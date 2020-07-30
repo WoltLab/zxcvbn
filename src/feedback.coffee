@@ -1,6 +1,6 @@
 scoring = require('./scoring')
 
-phrases =
+default_phrases =
   suggestions:
     use_words_avoid_common_phrases: 'Use a few words, avoid common phrases'
     no_need_for_symbols_digits_uppercase: 'No need for symbols, digits, or uppercase letters'
@@ -48,7 +48,15 @@ phrases =
 
 
 class Feedback
-  constructor: (@phrases = phrases) ->
+  constructor: (phrases = {}) ->
+    @phrases = {}
+    for source in [default_phrases, phrases]
+      for key, value of source
+        @phrases[key] = {
+          (@phrases[key] or {})...
+          value...
+        }
+  
     @default_feedback =
       warning: ''
       suggestions: [
