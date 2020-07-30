@@ -1,11 +1,58 @@
 scoring = require('./scoring')
 
+phrases =
+  suggestions:
+    use_words_avoid_common_phrases: 'Use a few words, avoid common phrases'
+    no_need_for_symbols_digits_uppercase: 'No need for symbols, digits, or uppercase letters'
+
+    add_word_uncommon_better: 'Add another word or two. Uncommon words are better.'
+
+    use_longer_keyboard_pattern: 'Use a longer keyboard pattern with more turns'
+
+    avoid_repeat: 'Avoid repeated words and characters'
+
+    avoid_sequence: 'Avoid sequences'
+
+    avoid_recent_year: 'Avoid recent years'
+    avoid_associated_year: 'Avoid years that are associated with you'
+
+    avoid_date: 'Avoid dates and years that are associated with you'
+
+    start_upper: "Capitalization doesn't help very much"
+    all_upper: 'All-uppercase is almost as easy to guess as all-lowercase'
+
+    reversed: "Reversed words aren't much harder to guess"
+
+    l33t: "Predictable substitutions like '@' instead of 'a' don't help very much"
+
+  warnings:
+    straight_row: 'Straight rows of keys are easy to guess'
+    short_keyboard_pattern: 'Short keyboard patterns are easy to guess'
+
+    repeat_single_char: 'Repeats like "aaa" are easy to guess'
+    repeat: 'Repeats like "abcabcabc" are only slightly harder to guess than "abc"'
+
+    sequence: 'Sequences like abc or 6543 are easy to guess'
+
+    recent_year: 'Recent years are easy to guess'
+
+    date: 'Dates are often easy to guess'
+
+    top_10: 'This is a top-10 common password'
+    top_100: 'This is a top-100 common password'
+    common: 'This is a very common password'
+    common_alike: 'This is similar to a commonly used password'
+    sole_word: 'A word by itself is easy to guess'
+    sole_name: 'Names and surnames by themselves are easy to guess'
+    name: 'Common names and surnames are easy to guess'
+
+
 feedback =
   default_feedback:
     warning: ''
     suggestions: [
-      "Use a few words, avoid common phrases"
-      "No need for symbols, digits, or uppercase letters"
+      phrases.suggestions.use_words_avoid_common_phrases
+      phrases.suggestions.no_need_for_symbols_digits_uppercase
     ]
 
   get_feedback: (score, sequence) ->
@@ -22,7 +69,7 @@ feedback =
     for match in sequence[1..]
       longest_match = match if match.token.length > longest_match.token.length
     feedback = @get_match_feedback(longest_match, sequence.length == 1)
-    extra_feedback = 'Add another word or two. Uncommon words are better.'
+    extra_feedback = phrases.suggestions.add_word_uncommon_better
     if feedback?
       feedback.suggestions.unshift extra_feedback
       feedback.warning = '' unless feedback.warning?
@@ -40,77 +87,77 @@ feedback =
       when 'spatial'
         layout = match.graph.toUpperCase()
         warning = if match.turns == 1
-          'Straight rows of keys are easy to guess'
+          phrases.warnings.straight_row
         else
-          'Short keyboard patterns are easy to guess'
+          phrases.warnings.short_keyboard_pattern
         warning: warning
         suggestions: [
-          'Use a longer keyboard pattern with more turns'
+          phrases.suggestions.use_longer_keyboard_pattern
         ]
 
       when 'repeat'
         warning = if match.base_token.length == 1
-          'Repeats like "aaa" are easy to guess'
+          phrases.warnings.repeat_single_char
         else
-          'Repeats like "abcabcabc" are only slightly harder to guess than "abc"'
+          phrases.warnings.repeat
         warning: warning
         suggestions: [
-          'Avoid repeated words and characters'
+          phrases.suggestions.avoid_repeat
         ]
 
       when 'sequence'
-        warning: "Sequences like abc or 6543 are easy to guess"
+        warning: phrases.warnings.sequence
         suggestions: [
-          'Avoid sequences'
+          phrases.suggestions.avoid_sequence
         ]
 
       when 'regex'
         if match.regex_name == 'recent_year'
-          warning: "Recent years are easy to guess"
+          warning: phrases.warnings.recent_year
           suggestions: [
-            'Avoid recent years'
-            'Avoid years that are associated with you'
+            phrases.suggestions.avoid_recent_year
+            phrases.suggestions.avoid_associated_year
           ]
 
       when 'date'
-        warning: "Dates are often easy to guess"
+        warning: phrases.warnings.date
         suggestions: [
-          'Avoid dates and years that are associated with you'
+          phrases.suggestions.avoid_date
         ]
 
   get_dictionary_match_feedback: (match, is_sole_match) ->
     warning = if match.dictionary_name == 'passwords'
       if is_sole_match and not match.l33t and not match.reversed
         if match.rank <= 10
-          'This is a top-10 common password'
+          phrases.warnings.top_10
         else if match.rank <= 100
-          'This is a top-100 common password'
+          phrases.warnings.top_100
         else
-          'This is a very common password'
+          phrases.warnings.common
       else if match.guesses_log10 <= 4
-        'This is similar to a commonly used password'
+        phrases.warnings.common_alike
     else if match.dictionary_name == 'english_wikipedia'
       if is_sole_match
-        'A word by itself is easy to guess'
+        phrases.warnings.sole_word
     else if match.dictionary_name in ['surnames', 'male_names', 'female_names']
       if is_sole_match
-        'Names and surnames by themselves are easy to guess'
+        phrases.warnings.sole_name
       else
-        'Common names and surnames are easy to guess'
+        phrases.warnings.name
     else
       ''
 
     suggestions = []
     word = match.token
     if word.match(scoring.START_UPPER)
-      suggestions.push "Capitalization doesn't help very much"
+      suggestions.push phrases.suggestions.start_upper
     else if word.match(scoring.ALL_UPPER) and word.toLowerCase() != word
-      suggestions.push "All-uppercase is almost as easy to guess as all-lowercase"
+      suggestions.push phrases.suggestions.all_upper
 
     if match.reversed and match.token.length >= 4
-      suggestions.push "Reversed words aren't much harder to guess"
+      suggestions.push phrases.suggestions.reversed
     if match.l33t
-      suggestions.push "Predictable substitutions like '@' instead of 'a' don't help very much"
+      suggestions.push phrases.suggestions.l33t
 
     result =
       warning: warning
