@@ -1,56 +1,55 @@
 scoring = require('./scoring')
 
-default_phrases =
-  suggestions:
-    use_words_avoid_common_phrases: 'Use a few words, avoid common phrases'
-    no_need_for_symbols_digits_uppercase: 'No need for symbols, digits, or uppercase letters'
-
-    add_word_uncommon_better: 'Add another word or two. Uncommon words are better.'
-
-    use_longer_keyboard_pattern: 'Use a longer keyboard pattern with more turns'
-
-    avoid_repeat: 'Avoid repeated words and characters'
-
-    avoid_sequence: 'Avoid sequences'
-
-    avoid_recent_year: 'Avoid recent years'
-    avoid_associated_year: 'Avoid years that are associated with you'
-
-    avoid_date: 'Avoid dates and years that are associated with you'
-
-    start_upper: "Capitalization doesn't help very much"
-    all_upper: 'All-uppercase is almost as easy to guess as all-lowercase'
-
-    reversed: "Reversed words aren't much harder to guess"
-
-    l33t: "Predictable substitutions like '@' instead of 'a' don't help very much"
-
-  warnings:
-    straight_row: 'Straight rows of keys are easy to guess'
-    short_keyboard_pattern: 'Short keyboard patterns are easy to guess'
-
-    repeat_single_char: 'Repeats like "aaa" are easy to guess'
-    repeat: 'Repeats like "abcabcabc" are only slightly harder to guess than "abc"'
-
-    sequence: 'Sequences like abc or 6543 are easy to guess'
-
-    recent_year: 'Recent years are easy to guess'
-
-    date: 'Dates are often easy to guess'
-
-    top_10: 'This is a top-10 common password'
-    top_100: 'This is a top-100 common password'
-    common: 'This is a very common password'
-    common_alike: 'This is similar to a commonly used password'
-    sole_word: 'A word by itself is easy to guess'
-    sole_name: 'Names and surnames by themselves are easy to guess'
-    name: 'Common names and surnames are easy to guess'
-
-
 class Feedback
+  @default_phrases =
+    suggestions:
+      use_words_avoid_common_phrases: 'Use a few words, avoid common phrases'
+      no_need_for_symbols_digits_uppercase: 'No need for symbols, digits, or uppercase letters'
+
+      add_word_uncommon_better: 'Add another word or two. Uncommon words are better.'
+
+      use_longer_keyboard_pattern: 'Use a longer keyboard pattern with more turns'
+
+      avoid_repeat: 'Avoid repeated words and characters'
+
+      avoid_sequence: 'Avoid sequences'
+
+      avoid_recent_year: 'Avoid recent years'
+      avoid_associated_year: 'Avoid years that are associated with you'
+
+      avoid_date: 'Avoid dates and years that are associated with you'
+
+      start_upper: "Capitalization doesn't help very much"
+      all_upper: 'All-uppercase is almost as easy to guess as all-lowercase'
+
+      reversed: "Reversed words aren't much harder to guess"
+
+      l33t: "Predictable substitutions like '@' instead of 'a' don't help very much"
+
+    warnings:
+      straight_row: 'Straight rows of keys are easy to guess'
+      short_keyboard_pattern: 'Short keyboard patterns are easy to guess'
+
+      repeat_single_char: 'Repeats like "aaa" are easy to guess'
+      repeat: 'Repeats like "abcabcabc" are only slightly harder to guess than "abc"'
+
+      sequence: 'Sequences like abc or 6543 are easy to guess'
+
+      recent_year: 'Recent years are easy to guess'
+
+      date: 'Dates are often easy to guess'
+
+      top_10: 'This is a top-10 common password'
+      top_100: 'This is a top-100 common password'
+      common: 'This is a very common password'
+      common_alike: 'This is similar to a commonly used password'
+      sole_word: 'A word by itself is easy to guess'
+      sole_name: 'Names and surnames by themselves are easy to guess'
+      name: 'Common names and surnames are easy to guess'
+
   constructor: (phrases = {}) ->
     @phrases = {}
-    for source in [default_phrases, phrases]
+    for source in [@constructor.default_phrases, phrases]
       for key, value of source
         @phrases[key] = {
           (@phrases[key] or {})...

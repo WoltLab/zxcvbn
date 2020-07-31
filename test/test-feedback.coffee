@@ -7,6 +7,11 @@ test 'no warning for no password', (t) ->
   t.equal feedbacker.get_feedback(0, []).warning, ''
   t.end()
 
+test 'check that default_phrases are exposed', (t) ->
+  t.notEqual Feedback.default_phrases.warnings.date, undefined
+  t.equal Feedback.default_phrases.warnings.unknown, undefined
+  t.end()
+
 test 'basic localization test', (t) ->
   feedbacker = new Feedback
     warnings:
