@@ -18,10 +18,10 @@
     "prepublish": "npm run build"
   },
   "devDependencies": {
-    "browserify": "^16.5.1",
+    "browserify": "^16.5.2",
     "coffee-coverage": "^3.0.1",
-    "coffeescript": "^2.3.2",
     "coffeeify": "^3.0.0",
+    "coffeescript": "^2.3.2",
     "coffeetape": "^2.0.0",
     "exorcist": "^1.0.1",
     "faucet": "^0.0.1",
