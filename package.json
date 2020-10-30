@@ -18,6 +18,7 @@
     "prepublish": "npm run build"
   },
   "devDependencies": {
+    "@types/zxcvbn": "^4.4.0",
     "browserify": "^16.5.2",
     "coffee-coverage": "^3.0.1",
     "coffeeify": "^3.0.0",
